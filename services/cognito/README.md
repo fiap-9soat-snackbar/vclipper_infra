@@ -83,13 +83,27 @@ After deployment, your Cognito service provides:
 
 ### ✅ **Authentication Features:**
 - **Password Policy**: 8+ characters, uppercase, lowercase, numbers required
+- **Password History**: Prevents reuse of last 4 passwords for enhanced security
 - **Email Verification**: Required for account activation
-- **Advanced Security**: Enabled for suspicious activity detection
+- **Advanced Security Mode**: ENFORCED - Provides risk-based authentication and adaptive authentication
+- **Account Protection**: Automatic detection and blocking of suspicious sign-in attempts
 - **JWT Tokens**: 1-hour access/ID tokens, 30-day refresh tokens
 - **SRP Authentication**: Secure Remote Password protocol
 
+### 🔒 **Advanced Security Features (ENFORCED):**
+- **Risk-Based Authentication**: Analyzes sign-in patterns and device fingerprints
+- **Adaptive Authentication**: Challenges users based on risk assessment
+- **Compromised Credentials Detection**: Blocks known compromised passwords
+- **Suspicious Activity Monitoring**: Tracks and responds to unusual login patterns
+- **Device Tracking**: Remembers trusted devices to reduce friction
+
+### 🔒 **Password Security:**
+- **Complex Requirements**: Minimum 8 characters with mixed case, numbers
+- **History Enforcement**: Cannot reuse last 4 passwords
+- **Compromised Password Protection**: AWS maintains database of known compromised passwords
+
 ### 🔒 **Simplified for Education:**
-- **MFA Disabled**: No SMS costs or complexity
+- **MFA Disabled**: No SMS costs or complexity (can be enabled if needed)
 - **No Hosted UI**: Direct API integration only
 - **LabRole Compatible**: Works with educational AWS constraints
 

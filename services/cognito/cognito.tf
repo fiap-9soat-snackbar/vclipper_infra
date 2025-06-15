@@ -4,11 +4,12 @@ resource "aws_cognito_user_pool" "main" {
 
   # Password policy
   password_policy {
-    minimum_length    = var.password_policy.minimum_length
-    require_lowercase = var.password_policy.require_lowercase
-    require_numbers   = var.password_policy.require_numbers
-    require_symbols   = var.password_policy.require_symbols
-    require_uppercase = var.password_policy.require_uppercase
+    minimum_length        = var.password_policy.minimum_length
+    require_lowercase     = var.password_policy.require_lowercase
+    require_numbers       = var.password_policy.require_numbers
+    require_symbols       = var.password_policy.require_symbols
+    require_uppercase     = var.password_policy.require_uppercase
+    password_history_size = var.password_policy.password_history_size
   }
 
   # Auto verified attributes

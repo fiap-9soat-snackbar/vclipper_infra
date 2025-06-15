@@ -61,7 +61,8 @@ vclipper_infra/
 |---------|--------|-------------|
 | **Global** | ✅ Deployed | Shared configuration and state management |
 | **Frontend Hosting** | ✅ Deployed | S3 static website hosting for React app |
-| **Cognito Authentication** | ✅ Deployed | User Pool with API-driven authentication |
+| **Cognito Authentication** | ✅ Deployed | User Pool with advanced security and password history |
+| **Frontend Integration** | ✅ Complete | React app successfully integrated with Cognito |
 | **API Gateway** | 🔄 Planned | JWT validation and backend routing |
 | **Backend Services** | 🔄 Planned | Video processing microservices |
 
@@ -118,12 +119,16 @@ Global (Required First)
 ### Frontend Hosting
 - **S3 Bucket**: `vclipper-frontend-dev`
 - **Website URL**: `http://vclipper-frontend-dev.s3-website-us-east-1.amazonaws.com`
-- **HTTPS URL**: `https://vclipper-frontend-dev.s3.us-east-1.amazonaws.com`
+- **HTTPS URL**: `https://vclipper-frontend-dev.s3.us-east-1.amazonaws.com/index.html`
+- **Hash Routing**: Enabled for HTTPS compatibility
 
 ### Cognito Authentication
 - **User Pool ID**: `us-east-1_SUMiE0yRW`
 - **Client ID**: `3r2uf0r673ronu2bgdsljbjamd`
 - **JWT Issuer**: `https://cognito-idp.us-east-1.amazonaws.com/us-east-1_SUMiE0yRW`
+- **Advanced Security**: ENFORCED (risk-based authentication)
+- **Password History**: Last 4 passwords prevented from reuse
+- **Integration Status**: ✅ Live and working with React frontend
 
 ## 🔗 Service Integration
 

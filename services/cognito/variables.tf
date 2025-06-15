@@ -31,18 +31,20 @@ variable "app_client_name" {
 variable "password_policy" {
   description = "Password policy configuration"
   type = object({
-    minimum_length    = number
-    require_lowercase = bool
-    require_numbers   = bool
-    require_symbols   = bool
-    require_uppercase = bool
+    minimum_length        = number
+    require_lowercase     = bool
+    require_numbers       = bool
+    require_symbols       = bool
+    require_uppercase     = bool
+    password_history_size = number
   })
   default = {
-    minimum_length    = 8
-    require_lowercase = true
-    require_numbers   = true
-    require_symbols   = false
-    require_uppercase = true
+    minimum_length        = 8
+    require_lowercase     = true
+    require_numbers       = true
+    require_symbols       = false
+    require_uppercase     = true
+    password_history_size = 4
   }
 }
 
