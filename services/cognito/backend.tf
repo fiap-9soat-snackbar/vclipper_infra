@@ -11,7 +11,7 @@ terraform {
   backend "s3" {
     bucket = "vclipper-terraform-state-dev-rmxhnjty"
     region = "us-east-1"
-    key    = "global/frontend-hosting/terraform.tfstate"
+    key    = "global/cognito/terraform.tfstate"
   }
 }
 
@@ -22,7 +22,7 @@ provider "aws" {
     tags = {
       ManagedBy   = "Terraform"
       Project     = data.terraform_remote_state.global.outputs.project_name
-      Service     = "frontend-hosting"
+      Service     = "cognito"
       Environment = var.environment
     }
   }

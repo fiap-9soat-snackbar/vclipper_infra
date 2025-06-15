@@ -102,6 +102,32 @@ The improved S3 bucket policy provides:
 - Bucket deletion (`s3:DeleteBucket`)
 - ACL modifications (`s3:PutBucketAcl`, `s3:PutObjectAcl`)
 
+## 🔗 Integration with Cognito Authentication
+
+This frontend hosting service is integrated with the VClipper Cognito authentication service:
+
+### Authentication Flow
+```
+React App (S3) → Cognito APIs → JWT Tokens → API Gateway → Backend Services
+```
+
+### Cognito Integration URLs
+The S3 website URLs are configured as valid origins in the Cognito service:
+- **HTTP Website**: `http://vclipper-frontend-dev.s3-website-us-east-1.amazonaws.com`
+- **HTTPS Direct**: `https://vclipper-frontend-dev.s3.us-east-1.amazonaws.com`
+
+### React Environment Variables
+Your React app should include these Cognito environment variables:
+```bash
+# Cognito Configuration (from cognito service outputs)
+REACT_APP_AWS_REGION=us-east-1
+REACT_APP_COGNITO_USER_POOL_ID=us-east-1_SUMiE0yRW
+REACT_APP_COGNITO_USER_POOL_CLIENT_ID=3r2uf0r673ronu2bgdsljbjamd
+
+# Frontend URLs (from this service outputs)
+REACT_APP_FRONTEND_URL=http://vclipper-frontend-dev.s3-website-us-east-1.amazonaws.com
+```
+
 ## 🚀 React Application Deployment
 
 ### Build and Deploy

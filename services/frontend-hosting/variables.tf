@@ -1,3 +1,8 @@
+variable "terraform_state_bucket" {
+  description = "Name of the S3 bucket storing Terraform state"
+  type        = string
+}
+
 variable "environment" {
   description = "Environment name (dev, staging, prod)"
   type        = string
