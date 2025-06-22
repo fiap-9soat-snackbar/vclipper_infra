@@ -1,0 +1,32 @@
+{
+  "Version": "2012-10-17",
+  "Id": "${topic_name}-policy",
+  "Statement": [
+    {
+      "Sid": "AllowBackendToPublish",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::${account_id}:role/LabRole"
+      },
+      "Action": [
+        "sns:Publish",
+        "sns:GetTopicAttributes"
+      ],
+      "Resource": "${topic_arn}"
+    },
+    {
+      "Sid": "AllowCloudWatchToPublish",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "cloudwatch.amazonaws.com"
+      },
+      "Action": "sns:Publish",
+      "Resource": "${topic_arn}",
+      "Condition": {
+        "StringEquals": {
+          "aws:SourceAccount": "${account_id}"
+        }
+      }
+    }
+  ]
+}

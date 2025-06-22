@@ -1,0 +1,37 @@
+{
+  "Version": "2012-10-17",
+  "Id": "${queue_name}-policy",
+  "Statement": [
+    {
+      "Sid": "AllowS3ToSendMessage",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "s3.amazonaws.com"
+      },
+      "Action": "sqs:SendMessage",
+      "Resource": "${queue_arn}",
+      "Condition": {
+        "StringEquals": {
+          "aws:SourceAccount": "${account_id}"
+        },
+        "ArnEquals": {
+          "aws:SourceArn": "${s3_bucket_arn}"
+        }
+      }
+    },
+    {
+      "Sid": "AllowBackendToReceiveMessages",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::${account_id}:role/LabRole"
+      },
+      "Action": [
+        "sqs:ReceiveMessage",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:ChangeMessageVisibility"
+      ],
+      "Resource": "${queue_arn}"
+    }
+  ]
+}

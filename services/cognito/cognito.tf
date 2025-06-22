@@ -1,4 +1,7 @@
+#--------------------------------------------------------------
 # Cognito User Pool
+#--------------------------------------------------------------
+
 resource "aws_cognito_user_pool" "main" {
   name = "${var.user_pool_name}-${var.environment}"
 
@@ -81,7 +84,10 @@ resource "aws_cognito_user_pool" "main" {
   }
 }
 
+#--------------------------------------------------------------
 # Cognito User Pool Client
+#--------------------------------------------------------------
+
 resource "aws_cognito_user_pool_client" "main" {
   name         = "${var.app_client_name}-${var.environment}"
   user_pool_id = aws_cognito_user_pool.main.id

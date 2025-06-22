@@ -1,0 +1,34 @@
+{
+  "Version": "2012-10-17",
+  "Id": "${queue_name}-policy",
+  "Statement": [
+    {
+      "Sid": "AllowSendMessageFromMainQueue",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "sqs.amazonaws.com"
+      },
+      "Action": "sqs:SendMessage",
+      "Resource": "${queue_arn}",
+      "Condition": {
+        "ArnEquals": {
+          "aws:SourceArn": "${source_queue_arn}"
+        }
+      }
+    },
+    {
+      "Sid": "AllowBackendToReceiveMessages",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::${account_id}:role/LabRole"
+      },
+      "Action": [
+        "sqs:ReceiveMessage",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:ChangeMessageVisibility"
+      ],
+      "Resource": "${queue_arn}"
+    }
+  ]
+}

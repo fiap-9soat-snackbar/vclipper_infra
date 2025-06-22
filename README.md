@@ -12,11 +12,29 @@ Terraform infrastructure as code for the VClipper video processing microservices
                                                            │
                                                            ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│                     Backend Services (Future)                      │
+│                        Backend Services                            │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
 │  │  Processing     │  │   VClipping     │  │   Notification  │    │
 │  │   Service       │  │    Service      │  │    Service      │    │
 │  │  (Video Upload) │  │ (Video Process) │  │  (Status/Email) │    │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
+└─────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    Infrastructure Services                         │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
+│  │  SQS Processing │  │  SNS Notifications│  │  Video Storage  │    │
+│  │   (Queues)      │  │   (Topics)      │  │   (S3 Buckets)  │    │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
+└─────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Monitoring & Observability                    │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
+│  │  CloudWatch     │  │  Log Groups     │  │  Metric Alarms  │    │
+│  │  Dashboard      │  │  (12 Groups)    │  │  (15+ Alarms)   │    │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -49,6 +67,43 @@ vclipper_infra/
 │   │   ├── terraform.tfvars   # Service variable values
 │   │   └── README.md          # Authentication documentation
 │   │
+│   ├── video-storage/         # S3 video storage service
+│   │   ├── s3.tf              # S3 buckets for video assets
+│   │   ├── variables.tf       # Storage-specific variables
+│   │   ├── outputs.tf         # Storage outputs
+│   │   ├── backend.tf         # Backend configuration
+│   │   ├── terraform.tfvars   # Service variable values
+│   │   └── README.md          # Storage documentation
+│   │
+│   ├── sqs-processing/        # SQS message queues
+│   │   ├── sqs.tf             # SQS queues and DLQ configuration
+│   │   ├── variables.tf       # Queue-specific variables
+│   │   ├── outputs.tf         # Queue outputs
+│   │   ├── backend.tf         # Backend configuration
+│   │   ├── terraform.tfvars   # Service variable values
+│   │   └── README.md          # Queue documentation
+│   │
+│   ├── sns-notifications/     # SNS notification topics
+│   │   ├── sns.tf             # SNS topics and subscriptions
+│   │   ├── variables.tf       # Notification-specific variables
+│   │   ├── outputs.tf         # SNS outputs
+│   │   ├── backend.tf         # Backend configuration
+│   │   ├── terraform.tfvars   # Service variable values
+│   │   └── README.md          # Notification documentation
+│   │
+│   ├── monitoring/            # CloudWatch monitoring service
+│   │   ├── cw-alarms.tf       # CloudWatch metric alarms
+│   │   ├── cw-dashboards.tf   # CloudWatch dashboards
+│   │   ├── cw-log-groups.tf   # Log groups and metric filters
+│   │   ├── data-sources.tf    # Remote state data sources
+│   │   ├── locals.tf          # Local values and configurations
+│   │   ├── variables.tf       # Monitoring variables
+│   │   ├── outputs.tf         # Monitoring outputs
+│   │   ├── backend.tf         # Backend configuration
+│   │   ├── terraform.tfvars   # Service variable values
+│   │   ├── dashboards/        # Dashboard JSON templates
+│   │   └── README.md          # Monitoring documentation
+│   │
 │   └── api-gateway/           # API Gateway service (planned)
 │       └── README.md          # Future API Gateway configuration
 │
@@ -62,6 +117,10 @@ vclipper_infra/
 | **Global** | ✅ Deployed | Shared configuration and state management |
 | **Frontend Hosting** | ✅ Deployed | S3 static website hosting for React app |
 | **Cognito Authentication** | ✅ Deployed | User Pool with advanced security and password history |
+| **Video Storage** | ✅ Deployed | S3 buckets for video assets and processed content |
+| **SQS Processing** | ✅ Deployed | Message queues for video processing workflow |
+| **SNS Notifications** | ✅ Deployed | Notification topics for success/failure alerts |
+| **Monitoring** | ✅ Deployed | Comprehensive CloudWatch monitoring with 12 log groups |
 | **Frontend Integration** | ✅ Complete | React app successfully integrated with Cognito |
 | **API Gateway** | 🔄 Planned | JWT validation and backend routing |
 | **Backend Services** | 🔄 Planned | Video processing microservices |
@@ -73,7 +132,9 @@ vclipper_infra/
 2. **Terraform v1.12+** installed
 3. **LabRole** permissions in AWS educational environment
 
-### Initial Setup
+### Deployment Order
+
+Services must be deployed in the correct order due to dependencies:
 
 #### 1. Deploy Global Configuration
 ```bash
@@ -83,17 +144,32 @@ terraform plan
 terraform apply
 ```
 
-#### 2. Deploy Frontend Hosting
+#### 2. Deploy Core Services (Independent)
 ```bash
+# Frontend Hosting
 cd services/frontend-hosting/
-terraform init
-terraform plan
-terraform apply
+terraform init && terraform apply
+
+# Cognito Authentication
+cd ../cognito/
+terraform init && terraform apply
+
+# Video Storage
+cd ../video-storage/
+terraform init && terraform apply
+
+# SQS Processing
+cd ../sqs-processing/
+terraform init && terraform apply
+
+# SNS Notifications
+cd ../sns-notifications/
+terraform init && terraform apply
 ```
 
-#### 3. Deploy Cognito Authentication
+#### 3. Deploy Monitoring (Depends on all above)
 ```bash
-cd services/cognito/
+cd services/monitoring/
 terraform init
 terraform plan
 terraform apply
