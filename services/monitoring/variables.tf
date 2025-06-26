@@ -109,3 +109,54 @@ variable "cognito_auth_failure_threshold" {
   type        = number
   default     = 15
 }
+#--------------------------------------------------------------
+# API Gateway Alarm Variables
+#--------------------------------------------------------------
+
+variable "api_gateway_4xx_threshold" {
+  description = "Threshold for API Gateway 4xx errors"
+  type        = number
+  default     = 10
+}
+
+variable "api_gateway_5xx_threshold" {
+  description = "Threshold for API Gateway 5xx errors"
+  type        = number
+  default     = 5
+}
+
+variable "api_gateway_latency_threshold" {
+  description = "Threshold for API Gateway latency in milliseconds"
+  type        = number
+  default     = 2000
+}
+
+variable "api_gateway_integration_latency_threshold" {
+  description = "Threshold for API Gateway integration latency in milliseconds"
+  type        = number
+  default     = 1500
+}
+
+variable "api_gateway_error_evaluation_periods" {
+  description = "Number of evaluation periods for API Gateway error alarms"
+  type        = number
+  default     = 2
+}
+
+variable "api_gateway_latency_evaluation_periods" {
+  description = "Number of evaluation periods for API Gateway latency alarms"
+  type        = number
+  default     = 3
+}
+
+variable "api_gateway_request_count_threshold" {
+  description = "Threshold for API Gateway high request count"
+  type        = number
+  default     = 1000
+}
+
+variable "websocket_connection_threshold" {
+  description = "Threshold for WebSocket concurrent connections"
+  type        = number
+  default     = 1000
+}

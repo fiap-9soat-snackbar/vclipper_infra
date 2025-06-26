@@ -182,3 +182,23 @@ output "monitoring_config" {
   }
   sensitive = false
 }
+#--------------------------------------------------------------
+# API Gateway Monitoring Outputs
+#--------------------------------------------------------------
+
+output "api_gateway_log_group_arn" {
+  description = "ARN of the API Gateway CloudWatch log group"
+  value       = aws_cloudwatch_log_group.api_gateway_logs.arn
+}
+
+output "api_gateway_alarms" {
+  description = "API Gateway CloudWatch alarms"
+  value = {
+    "4xx_errors"           = aws_cloudwatch_metric_alarm.api_gateway_4xx_errors.arn
+    "5xx_errors"           = aws_cloudwatch_metric_alarm.api_gateway_5xx_errors.arn
+    "high_latency"         = aws_cloudwatch_metric_alarm.api_gateway_latency.arn
+    "integration_latency"  = aws_cloudwatch_metric_alarm.api_gateway_integration_latency.arn
+    "high_requests"        = aws_cloudwatch_metric_alarm.api_gateway_high_request_count.arn
+    "websocket_connections" = aws_cloudwatch_metric_alarm.websocket_connection_count.arn
+  }
+}

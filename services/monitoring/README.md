@@ -31,19 +31,25 @@ This Terraform configuration provisions comprehensive CloudWatch monitoring infr
 
 ```
 .
-├── cw-alarms.tf              # CloudWatch metric alarms
+├── cw-alarms.tf              # CloudWatch metric alarms (21 total)
 ├── cw-dashboards.tf          # CloudWatch dashboards
 ├── cw-log-groups.tf          # Log groups and metric filters
-├── data-sources.tf           # Remote state data sources
+├── data-sources.tf           # Remote state data sources (centralized)
 ├── locals.tf                 # Local values and configurations
 ├── variables.tf              # Input variable definitions
 ├── outputs.tf                # Output value definitions
-├── backend.tf                # Terraform backend configuration
+├── backend.tf                # Terraform backend + global data source
 ├── terraform.tfvars          # Variable values
 ├── dashboards/               # Dashboard JSON templates
 │   └── infrastructure_dashboard.json
 └── README.md                 # This documentation
 ```
+
+### Architecture Best Practices
+- **Centralized Data Sources**: All remote state references in `data-sources.tf`
+- **Separation of Concerns**: Alarms, dashboards, and log groups in separate files
+- **Service Integration**: Automatic integration with all deployed services
+- **Scalable Structure**: Easy to add new services and monitoring components
 
 ## 🛠️ Terraform Resources
 
@@ -161,13 +167,24 @@ Service-agnostic pattern with `/aws/application/` for compute flexibility:
 | `sns_failure_delivery_failures` | SNS NumberOfNotificationsFailed | 5 failures | Failure topic delivery monitoring |
 | `sns_failure_high_volume` | SNS NumberOfNotificationsDelivered | 50 notifications | High failure notification volume |
 
+### API Gateway Alarms (6 Total)
+
+| Alarm | Metric | Threshold | Evaluation Periods | Severity | Purpose |
+|-------|--------|-----------|-------------------|----------|---------|
+| `api_gateway_4xx_errors` | AWS/ApiGatewayV2 4XXError | 10 errors | 2 | Warning | Client-side API issues |
+| `api_gateway_5xx_errors` | AWS/ApiGatewayV2 5XXError | 5 errors | 2 | Critical | Server-side API issues |
+| `api_gateway_high_latency` | AWS/ApiGatewayV2 Latency | 2000ms | 3 | Warning | API performance issues |
+| `api_gateway_integration_latency` | AWS/ApiGatewayV2 IntegrationLatency | 1500ms | 3 | Warning | Backend performance issues |
+| `api_gateway_high_requests` | AWS/ApiGatewayV2 Count | 1000 requests | 2 | Info | High traffic monitoring |
+| `websocket_connection_count` | AWS/ApiGatewayV2 ConnectCount | 1000 connections | 2 | Info | WebSocket usage monitoring |
+
 ## 📈 CloudWatch Dashboard
 
 ### VClipper Infrastructure Dashboard
 
 **Dashboard Name**: `VClipper-Infrastructure-dev`
 
-**Layout**: 7 panels in optimized grid layout
+**Layout**: 11 panels in optimized grid layout
 
 #### Panel Configuration
 
@@ -179,7 +196,11 @@ Service-agnostic pattern with `/aws/application/` for compute flexibility:
 | **Cognito Authentication Metrics** | Middle-right (12x6) | Sign-in failures, token refresh failures | Authentication monitoring |
 | **SNS Notification Metrics** | Bottom-left (12x6) | Delivery success/failure rates | Notification monitoring |
 | **Application Metrics** | Bottom-right (12x6) | Error rates, processing success/failure | Application health monitoring |
-| **Recent Application Errors** | Bottom-full (24x6) | Live error log query | Real-time error analysis |
+| **Recent Application Errors** | Full-width (24x6) | Live error log query | Real-time error analysis |
+| **API Gateway Request & Error Metrics** | Row 4-left (12x6) | Request count, 4xx/5xx errors | API Gateway health monitoring |
+| **API Gateway Latency Metrics** | Row 4-right (12x6) | Response latency, integration latency | API Gateway performance monitoring |
+| **WebSocket API Metrics** | Row 5-left (12x6) | Connection count, message count | WebSocket usage monitoring |
+| **Recent API Gateway Errors** | Row 5-right (12x6) | Live API error log query | Real-time API error analysis |
 
 #### Dashboard Features
 
@@ -187,6 +208,22 @@ Service-agnostic pattern with `/aws/application/` for compute flexibility:
 - **Period**: 5-minute intervals for detailed monitoring
 - **Log Insights**: Real-time error log queries
 - **Metric Math**: Calculated success rates and error percentages
+
+## ✅ Current Deployment Status
+
+| Component | Status | Count | Details |
+|-----------|--------|-------|---------|
+| **Log Groups** | ✅ Deployed | 12 | All AWS services + application components |
+| **Metric Filters** | ✅ Deployed | 10 | Custom business metrics extraction |
+| **CloudWatch Alarms** | ✅ Deployed | 21 | Infrastructure + application + API Gateway |
+| **Dashboard Widgets** | ✅ Deployed | 11 | Comprehensive monitoring view |
+| **API Gateway Integration** | ✅ Deployed | 6 alarms | Complete API Gateway monitoring |
+
+### Live Resources
+- **Dashboard URL**: [VClipper Infrastructure Dashboard](https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=VClipper-Infrastructure-dev)
+- **API Gateway Log Group**: `/aws/apigateway/vclipper`
+- **Total Alarms**: 21 (15 existing + 6 API Gateway)
+- **Monitoring Coverage**: All deployed services integrated
 
 ## 🚀 Deployment
 
@@ -198,6 +235,9 @@ Service-agnostic pattern with `/aws/application/` for compute flexibility:
    - SQS Processing
    - SNS Notifications
    - Video Storage
+   - Frontend Hosting
+   - Cognito Authentication
+   - API Gateway (✅ Deployed)
    - Frontend Hosting
    - Cognito
 

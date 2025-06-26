@@ -124,6 +124,78 @@
         "region": "${aws_region}",
         "title": "Recent Application Errors"
       }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 24,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/ApiGatewayV2", "Count", "ApiId", "${api_gateway_id}"],
+          [".", "4XXError", "ApiId", "${api_gateway_id}"],
+          [".", "5XXError", "ApiId", "${api_gateway_id}"]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "${aws_region}",
+        "title": "API Gateway Request & Error Metrics",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 24,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/ApiGatewayV2", "Latency", "ApiId", "${api_gateway_id}"],
+          [".", "IntegrationLatency", "ApiId", "${api_gateway_id}"]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "${aws_region}",
+        "title": "API Gateway Latency Metrics",
+        "period": 300,
+        "yAxis": {
+          "left": {
+            "label": "Milliseconds"
+          }
+        }
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 30,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/ApiGatewayV2", "ConnectCount", "ApiId", "${websocket_api_id}"],
+          [".", "MessageCount", "ApiId", "${websocket_api_id}"]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "${aws_region}",
+        "title": "WebSocket API Metrics",
+        "period": 300
+      }
+    },
+    {
+      "type": "log",
+      "x": 12,
+      "y": 30,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "query": "SOURCE '/aws/apigateway/vclipper' | fields @timestamp, @message | filter @message like /ERROR/ or status >= 400 | sort @timestamp desc | limit 20",
+        "region": "${aws_region}",
+        "title": "Recent API Gateway Errors"
+      }
     }
   ]
 }
