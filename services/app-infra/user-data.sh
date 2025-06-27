@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Update and install required packages
-echo "#################### Updating and installing required packages: wget, apt-transport-https and gpg ####################"
+echo "#################### Updating and installing required packages: wget, apt-transport-https, gpg, curl, and unzip ####################"
 apt-get update
-apt-get install -y wget apt-transport-https gpg git
+apt-get install -y wget apt-transport-https gpg curl unzip
 
 # Add Adoptium official GPG key
 echo "#################### Adding Adoptium official GPG key ####################"
@@ -23,7 +23,7 @@ export JAVA_HOME="/usr/lib/jvm/temurin-21-jdk-amd64"
 # Install Maven
 echo "#################### Installing Maven ####################"
 cd /tmp
-wget https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
+wget https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
 tar -xf apache-maven-3.9.9-bin.tar.gz
 mv apache-maven-3.9.9 /opt/maven
 chown -R root:root /opt/maven
@@ -44,7 +44,11 @@ ln -s /opt/maven/bin/mvn /usr/bin/mvn
 echo "#################### Downloading VClipper application from repository ####################"
 mkdir -p /home/ubuntu/app
 cd /home/ubuntu/app
-git clone https://github.com/fiap-9soat-snackbar/vclipper_processing.git
+
+# Set HOME environment variable for git
+export HOME=/root
+git clone --depth 1 https://github.com/fiap-9soat-snackbar/vclipper_processing.git
+
 chown -R ubuntu:ubuntu /home/ubuntu/app
 cd vclipper_processing
 
@@ -155,4 +159,4 @@ sudo -u ubuntu docker compose up -d --build
 echo "VClipper application running on http://localhost:8080"
 echo "Health check available at: http://localhost:8080/actuator/health"
 
-EOF
+# EOF

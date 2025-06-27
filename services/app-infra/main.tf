@@ -5,7 +5,8 @@
 # Get latest Ubuntu 24.04 AMI
 data "aws_ami" "ubuntu" {
   most_recent = true
-  owners      = ["099720109477"] # Canonical
+  owners      = ["amazon"]
+  # owners      = ["099720109477"] # Canonical
 
   filter {
     name   = "name"
@@ -166,11 +167,6 @@ resource "aws_security_group" "ec2" {
 # EC2 Instance
 #--------------------------------------------------------------
 
-# Read user data script
-locals {
-  user_data = file("${path.module}/user-data.sh")
-}
-
 # Elastic IP for EC2 instance
 resource "aws_eip" "app_server" {
   domain = "vpc"
@@ -191,7 +187,7 @@ resource "aws_instance" "app_server" {
   subnet_id              = aws_subnet.public[0].id
   iam_instance_profile   = var.iam_instance_profile
 
-  user_data = base64encode(local.user_data)
+  user_data_base64 = base64encode(file("${path.module}/user-data.sh"))
 
   root_block_device {
     volume_type = "gp3"
