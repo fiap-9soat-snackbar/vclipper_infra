@@ -1,0 +1,100 @@
+
+IMAGE:
+  REPOSITORY: 171219910203199431032017/vclipper
+  TAG: latest
+  PULL_POLICY: Always
+
+HPA:
+  ENABLED: true
+  MAXREPLICAS: 3
+  CPU: 90
+  MEMORY: 400Mi
+
+INGRESS:
+  ENABLED: false
+  HOST: api.vclipper.com.br
+  GATEWAY: ingress-gw
+  PREFIX: /
+  
+DEPLOYMENT:
+  REPLICAS: 2
+  PORT: 8080
+  STRATEGY:
+    MAXSURGE: 1
+    MAXUNAVAILABLE: 1
+    TYPE: RollingUpdate
+  ENV:
+    ENABLED: true
+
+  TOLERATIONS:
+    ENABLED: true
+    KEY: application
+    OPERATOR: Equal
+    VALUE: vclipper
+    EFFECT: NoSchedule
+  NODESELECTOR:
+    ENABLED: true
+    KEY: application
+    VALUE: vclipper
+  RESOURCES:
+    MIN:
+      CPU: 50m
+      RAM: 12Mi
+    MAX:
+      RAM: 500Mi
+  
+  LIVENESSPROBE:
+    ENABLED: false
+    PATH: /actuator/health
+    INITIALDELAY: 120
+    PERIOD: 10
+    FAILURETHRESHOLD: 3
+
+  READINESSPROBE:
+    ENABLED: false
+    INITIALDELAY: 30
+    PERIOD: 10
+    FAILURETHRESHOLD: 3
+
+SERVICE:
+  TYPE: ClusterIP
+  PORT: 80
+  INTERNAL: false
+  HTTPS:
+    ENABLED: false
+  LOAD_BALANCER:
+    ENABLED: true
+    DNS_SUFFIX: api.vclipper.com.br
+    
+
+SECRET:
+  DATABASE:
+    MONGODB_USER: vclipperuser
+    MONGODB_PASSWORD: vclipper01
+    DB_HOST: vclipper-hackaton-dev.0acxv.mongodb.net
+    APP_DB: vclipper
+    DB_PORT: "27017"
+    MONGODB_OPTIONS: ""
+    RDS_HOST: ""
+    RDS_PASSWORD: ""
+    RDS_DATABASE: "vclipper"
+
+  JWT:
+    SECRET: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
+    EXPIRES_IN: "3600000"
+  INTEGRATION:
+    ORDER_SERVICE_URL: "http://vclipper-prod.prod.svc.cluster.local"
+    AWS_ACCOUNT_ID: ""
+    AWS_REGION: "us-east-1"
+    AWS_SQS_PRODUCT_EVENTS_QUEUE_URL: "https://sqs.us-east-1.amazonaws.com/${AWS_ACCOUNT_ID}/vclipper-queue"
+    AWS_ENDPOINT_URL: "https://sqs.us-east-1.amazonaws.com"
+    AWS_ACCESS_KEY: ""
+    AWS_SECRET_KEY: ""
+    AWS_SQS_POLLING_ENABLED: "true"
+    AWS_SQS_POLLING_DELAY_MS: "1000"
+    AWS_SQS_MAX_MESSAGES: "10"
+    AWS_SQS_WAIT_TIME_SECONDS: "5"
+    LOG_LEVEL_ROOT: "INFO"
+    LOG_LEVEL_APP: "DEBUG"
+    LOG_LEVEL_WEB: "INFO"
+    LOG_LEVEL_MONGODB: "INFO"

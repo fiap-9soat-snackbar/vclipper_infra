@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+
+spec:
+  replicas: {{ .Values.DEPLOYMENT.REPLICAS }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  strategy:
+    rollingUpdate:
+      maxSurge: {{ .Values.DEPLOYMENT.STRATEGY.MAXSURGE }}
+      maxUnavailable: {{ .Values.DEPLOYMENT.STRATEGY.MAXUNAVAILABLE }}
+    type: {{ .Values.DEPLOYMENT.STRATEGY.TYPE }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+    spec:
+      containers:
+      - image: "{{ .Values.IMAGE.REPOSITORY }}:{{ .Values.IMAGE.TAG }}"
+        name: {{ .Release.Name }}
+        imagePullPolicy: {{ .Values.IMAGE.PULL_POLICY }}
+        ports:
+        - containerPort: {{ .Values.DEPLOYMENT.PORT }}
+          protocol: TCP
+      {{ if .Values.DEPLOYMENT.READINESSPROBE.ENABLED }}    
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.DEPLOYMENT.PORT }}
+          initialDelaySeconds: {{ .Values.DEPLOYMENT.READINESSPROBE.INITIALDELAY }}
+          periodSeconds: {{ .Values.DEPLOYMENT.READINESSPROBE.PERIOD }}
+          failureThreshold: {{ .Values.DEPLOYMENT.READINESSPROBE.FAILURETHRESHOLD }}
+      {{ end }}
+      {{ if .Values.DEPLOYMENT.LIVENESSPROBE.ENABLED }} 
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.DEPLOYMENT.LIVENESSPROBE.PATH }}
+            port: {{ .Values.DEPLOYMENT.PORT }}
+          initialDelaySeconds: {{ .Values.DEPLOYMENT.LIVENESSPROBE.INITIALDELAY }}
+          periodSeconds: {{ .Values.DEPLOYMENT.LIVENESSPROBE.PERIOD }}
+          failureThreshold: {{ .Values.DEPLOYMENT.LIVENESSPROBE.FAILURETHRESHOLD }}
+      {{ end }}
+        resources:
+          {{ if .Values.DEPLOYMENT.RESOURCES }}
+          requests:
+            memory: {{ .Values.DEPLOYMENT.RESOURCES.MIN.RAM }}
+            cpu: {{ .Values.DEPLOYMENT.RESOURCES.MIN.CPU }}
+          limits:
+            memory: {{ .Values.DEPLOYMENT.RESOURCES.MAX.RAM }}
+          {{ else }}
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+          {{ end }}
+        envFrom:
+          - secretRef:
+              name: {{ .Release.Name }}
+      {{ if .Values.DEPLOYMENT.TOLERATIONS.ENABLED }}
+      tolerations:
+      - key: {{ .Values.DEPLOYMENT.TOLERATIONS.KEY }}
+        operator: {{ .Values.DEPLOYMENT.TOLERATIONS.OPERATOR }}
+        value: {{ .Values.DEPLOYMENT.TOLERATIONS.VALUE }}
+        effect: {{ .Values.DEPLOYMENT.TOLERATIONS.EFFECT }}
+      {{ end }}
+      {{ if .Values.DEPLOYMENT.NODESELECTOR.ENABLED }}
+      nodeSelector:
+        {{ .Values.DEPLOYMENT.NODESELECTOR.KEY }}: {{ .Values.DEPLOYMENT.NODESELECTOR.VALUE }}
+        {{ end }}
