@@ -81,7 +81,7 @@ module "sg_node_vclipper_eks" {
   ]
 
   tags = {
-    "kubernetes.io/cluster/snackbar-vclipper" = "owned" # <-- Importante para o service do k8s criar o loadbalance
+    "kubernetes.io/cluster/snackbar-vclipper" = "owned"
     Name                                         = join("-", [data.terraform_remote_state.global.outputs.project_name, "Node-Cluster-1-prod-EKS"])
     Provisioned  = "Terraform"
     CreatedBy    = "Team-82"
