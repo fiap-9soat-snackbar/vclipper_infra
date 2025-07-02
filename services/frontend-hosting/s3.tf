@@ -3,13 +3,13 @@
 #--------------------------------------------------------------
 
 resource "aws_s3_bucket" "frontend_bucket" {
-  bucket = var.bucket_name_override != "" ? var.bucket_name_override : "${data.terraform_remote_state.global.outputs.project_name}-frontend-${var.environment}"
+  bucket = var.bucket_name_override != "" ? var.bucket_name_override : "${data.terraform_remote_state.global.outputs.project_name}-frontend-${data.terraform_remote_state.global.outputs.environment}"
 
   tags = merge(
     {
-      Name        = var.bucket_name_override != "" ? var.bucket_name_override : "${data.terraform_remote_state.global.outputs.project_name}-frontend-${var.environment}"
+      Name        = var.bucket_name_override != "" ? var.bucket_name_override : "${data.terraform_remote_state.global.outputs.project_name}-frontend-${data.terraform_remote_state.global.outputs.environment}"
       Project     = data.terraform_remote_state.global.outputs.project_name
-      Environment = var.environment
+      Environment = data.terraform_remote_state.global.outputs.environment
       Purpose     = "frontend-static-files"
     },
     var.tags

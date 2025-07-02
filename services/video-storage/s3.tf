@@ -1,6 +1,6 @@
 # Local values for bucket naming and configuration
 locals {
-  bucket_name = var.bucket_name_override != "" ? var.bucket_name_override : "${data.terraform_remote_state.global.outputs.project_name}-video-storage-${var.environment}"
+  bucket_name = var.bucket_name_override != "" ? var.bucket_name_override : "${data.terraform_remote_state.global.outputs.project_name}-video-storage-${data.terraform_remote_state.global.outputs.environment}"
   
   # Get frontend URLs from remote state if available, otherwise use defaults
   frontend_http_url = try(data.terraform_remote_state.frontend.outputs.frontend_hosting_config.s3_website_http_url, "")
@@ -23,7 +23,7 @@ data "terraform_remote_state" "frontend" {
   backend = "s3"
   config = {
     region = "us-east-1"
-    bucket = var.terraform_state_bucket
+    bucket = var.bucket
     key    = "global/frontend-hosting/terraform.tfstate"
   }
 }

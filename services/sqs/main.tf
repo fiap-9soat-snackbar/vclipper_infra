@@ -1,27 +1,12 @@
-#--------------------------------------------------------------
-# Data Sources
-#--------------------------------------------------------------
 
-# Get current AWS account ID
-data "aws_caller_identity" "current" {}
-
-# Data source to get video storage bucket information
-data "terraform_remote_state" "video_storage" {
-  backend = "s3"
-  config = {
-    region = "us-east-1"
-    bucket = var.terraform_state_bucket
-    key    = "global/video-storage/terraform.tfstate"
-  }
-}
 
 #--------------------------------------------------------------
 # Local Values
 #--------------------------------------------------------------
 
 locals {
-  queue_name = var.queue_name_override != "" ? var.queue_name_override : "${data.terraform_remote_state.global.outputs.project_name}-video-processing-${var.environment}"
-  dlq_name   = var.dlq_name_override != "" ? var.dlq_name_override : "${data.terraform_remote_state.global.outputs.project_name}-video-processing-dlq-${var.environment}"
+  queue_name = var.queue_name_override != "" ? var.queue_name_override : "${data.terraform_remote_state.global.outputs.project_name}-video-processing-${data.terraform_remote_state.global.outputs.environment}"
+  dlq_name   = var.dlq_name_override != "" ? var.dlq_name_override : "${data.terraform_remote_state.global.outputs.project_name}-video-processing-dlq-${data.terraform_remote_state.global.outputs.environment}"
   
   common_tags = merge(var.tags, {
     Service = "sqs-processing"

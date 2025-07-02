@@ -1,15 +1,14 @@
 terraform {
-  required_version = ">= 1.12"
+  #required_version = ">= 1.12"
   
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.98"
+     #version = ">= 5.98"
     }
   }
 
   backend "s3" {
-    bucket = "vclipper-terraform-state-dev-rmxhnjty"
     region = "us-east-1"
     key    = "global/video-storage/terraform.tfstate"
   }
@@ -23,7 +22,7 @@ provider "aws" {
       ManagedBy   = "Terraform"
       Project     = data.terraform_remote_state.global.outputs.project_name
       Service     = "video-storage"
-      Environment = var.environment
+      Environment = data.terraform_remote_state.global.outputs.environment
     }
   }
 }
@@ -32,7 +31,7 @@ data "terraform_remote_state" "global" {
   backend = "s3"
   config = {
     region = "us-east-1"
-    bucket = var.terraform_state_bucket
+    bucket = var.bucket
     key    = "global/terraform.tfstate"
   }
 }

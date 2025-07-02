@@ -1,12 +1,6 @@
-variable "terraform_state_bucket" {
+variable "bucket" {
   description = "Name of the S3 bucket storing Terraform state"
   type        = string
-}
-
-variable "environment" {
-  description = "Environment name (dev, staging, prod)"
-  type        = string
-  default     = "dev"
 }
 
 variable "cloudfront_distribution_arn" {
