@@ -11,7 +11,7 @@ variable "bucket" {
 variable "backend_alb_dns_name" {
   description = "DNS name of the Application Load Balancer for backend services"
   type        = string
-  default     = "localhost:8080"  # Default for development/testing
+  default     = "teste-744402398.us-east-1.elb.amazonaws.com"  # Default for development/testing
 }
 
 # Optional: Custom domain configuration (future)

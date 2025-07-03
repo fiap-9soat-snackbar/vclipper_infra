@@ -89,7 +89,7 @@ output "app_user_log_group_name" {
 
 output "api_gateway_log_group_name" {
   description = "Name of the API Gateway log group"
-  value       = aws_cloudwatch_log_group.api_gateway_logs.name
+  value       = data.terraform_remote_state.api_gateway.outputs.api_gateway_logs_name
 }
 
 output "lambda_authorizer_log_group_name" {
@@ -154,7 +154,7 @@ output "monitoring_config" {
   description = "Complete monitoring configuration for application integration"
   value = {
     log_groups = {
-      api_gateway_logs         = aws_cloudwatch_log_group.api_gateway_logs.name
+      api_gateway_logs         = data.terraform_remote_state.api_gateway.outputs.api_gateway_logs_name
       eks_cluster_logs         = aws_cloudwatch_log_group.eks_cluster_logs.name
       lambda_authorizer_logs   = aws_cloudwatch_log_group.lambda_authorizer_logs.name
       s3_frontend_access_logs  = aws_cloudwatch_log_group.s3_frontend_access_logs.name
@@ -188,7 +188,7 @@ output "monitoring_config" {
 
 output "api_gateway_log_group_arn" {
   description = "ARN of the API Gateway CloudWatch log group"
-  value       = aws_cloudwatch_log_group.api_gateway_logs.arn
+  value       = data.terraform_remote_state.api_gateway.outputs.api_gateway_logs_arn
 }
 
 output "api_gateway_alarms" {

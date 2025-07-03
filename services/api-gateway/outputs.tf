@@ -44,6 +44,17 @@ output "websocket_invoke_url" {
   value       = aws_apigatewayv2_stage.websocket_default.invoke_url
 }
 
+# Log Group Outputs
+output "api_gateway_logs_name" {
+  description = "Api Gateway Log Group Name"
+  value       = aws_cloudwatch_log_group.api_gateway_logs.name
+}
+
+output "api_gateway_logs_arn" {
+  description = "Api Gateway Log Group Name"
+  value       = aws_cloudwatch_log_group.api_gateway_logs.arn
+}
+
 # Authorizer Outputs
 output "jwt_authorizer_id" {
   description = "ID of the JWT authorizer"
