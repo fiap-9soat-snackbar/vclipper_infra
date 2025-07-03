@@ -1,9 +1,4 @@
 #--------------------------------------------------------------
-# VClipper API Gateway - Video Processing REST API
-#--------------------------------------------------------------
-
-
-#--------------------------------------------------------------
 # API Gateway HTTP API
 #--------------------------------------------------------------
 
@@ -52,6 +47,17 @@ resource "aws_apigatewayv2_authorizer" "cognito_jwt" {
 #--------------------------------------------------------------
 # API Gateway Stage
 #--------------------------------------------------------------
+
+# API Gateway Log
+resource "aws_cloudwatch_log_group" "api_gateway_logs" {
+  name              = "/aws/apigateway/vclipper"
+  retention_in_days = var.log_retention_days
+
+  tags = merge(local.common_tags, {
+    LogType = "APIGateway"
+    Purpose = "API Gateway access and execution logs"
+  })
+}
 
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.vclipper_api.id

@@ -60,4 +60,14 @@ data "terraform_remote_state" "frontend_hosting" {
   }
 }
 
+#--------------------------------------------------------------
+# Local Values
+#--------------------------------------------------------------
+
+locals {
+  common_tags = merge(var.tags, {
+    Service = "monitoring"
+    Purpose = "Infrastructure monitoring and alerting"
+  })
+}
 

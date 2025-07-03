@@ -2,7 +2,6 @@
 # API Gateway Variables
 #--------------------------------------------------------------
 
-
 variable "bucket" {
   description = "S3 bucket name for Terraform state"
   type        = string
@@ -60,4 +59,17 @@ variable "cors_allow_methods" {
   description = "List of allowed HTTP methods for CORS"
   type        = list(string)
   default     = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+}
+
+# CloudWatch Logs Configuration
+variable "log_retention_days" {
+  description = "CloudWatch logs retention period in days"
+  type        = number
+  default     = 14
+}
+
+variable "tags" {
+  description = "Additional tags to apply to resources"
+  type        = map(string)
+  default     = {}
 }
