@@ -39,7 +39,7 @@ data "terraform_remote_state" "global" {
   backend = "s3"
   config = {
     region = "us-east-1"
-    bucket = var.terraform_state_bucket
+    bucket = var.bucket
     key    = "global/terraform.tfstate"
   }
 }

@@ -37,7 +37,7 @@ data "terraform_remote_state" "global" {
   backend = "s3"
   config = {
     region = "us-east-1"
-    bucket = var.terraform_state_bucket
+    bucket = var.bucket
     key    = "global/terraform.tfstate"
   }
 }
@@ -47,7 +47,7 @@ data "terraform_remote_state" "sns_notifications" {
   backend = "s3"
   config = {
     region = "us-east-1"
-    bucket = var.terraform_state_bucket
+    bucket = var.bucket
     key    = "global/sns-notifications/terraform.tfstate"
   }
 }
@@ -57,7 +57,7 @@ data "terraform_remote_state" "sqs" {
   backend = "s3"
   config = {
     region = "us-east-1"
-    bucket = var.terraform_state_bucket
+    bucket = var.bucket
     key    = "global/sqs/terraform.tfstate"
   }
 }
@@ -67,7 +67,7 @@ data "terraform_remote_state" "video_storage" {
   backend = "s3"
   config = {
     region = "us-east-1"
-    bucket = var.terraform_state_bucket
+    bucket = var.bucket
     key    = "global/video-storage/terraform.tfstate"
   }
 }
@@ -77,7 +77,7 @@ data "terraform_remote_state" "frontend_hosting" {
   backend = "s3"
   config = {
     region = "us-east-1"
-    bucket = var.terraform_state_bucket
+    bucket = var.bucket
     key    = "global/frontend-hosting/terraform.tfstate"
   }
 }
@@ -87,7 +87,7 @@ data "terraform_remote_state" "cognito" {
   backend = "s3"
   config = {
     region = "us-east-1"
-    bucket = var.terraform_state_bucket
+    bucket = var.bucket
     key    = "global/cognito/terraform.tfstate"
   }
 }
@@ -97,7 +97,7 @@ data "terraform_remote_state" "api_gateway" {
   backend = "s3"
   config = {
     region = "us-east-1"
-    bucket = var.terraform_state_bucket
+    bucket = var.bucket
     key    = "global/api-gateway/terraform.tfstate"
   }
 }
