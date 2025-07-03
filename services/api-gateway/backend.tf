@@ -45,7 +45,7 @@ data "terraform_remote_state" "global" {
 data "terraform_remote_state" "cognito" {
   backend = "s3"
   config = {
-    region = var.aws_region
+    region = "us-east-1"
     bucket = var.bucket
     key    = "global/cognito/terraform.tfstate"
   }
@@ -54,7 +54,7 @@ data "terraform_remote_state" "cognito" {
 data "terraform_remote_state" "frontend_hosting" {
   backend = "s3"
   config = {
-    region = var.aws_region
+    region = "us-east-1"
     bucket = var.bucket
     key    = "global/frontend-hosting/terraform.tfstate"
   }
