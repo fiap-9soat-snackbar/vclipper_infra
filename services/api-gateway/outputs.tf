@@ -57,7 +57,7 @@ output "frontend_api_config" {
     api_base_url     = aws_apigatewayv2_stage.default.invoke_url
     websocket_url    = aws_apigatewayv2_stage.websocket_default.invoke_url
     api_gateway_id   = aws_apigatewayv2_api.vclipper_api.id
-    region          = var.aws_region
+    region           = data.terraform_remote_state.global.outputs.aws_region
   }
 }
 

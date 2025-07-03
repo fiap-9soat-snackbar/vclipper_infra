@@ -1,10 +1,10 @@
 terraform {
-  required_version = ">= 1.12"
+  #required_version = ">= 1.12"
   
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.98"
+      #version = ">= 5.98"
     }
   }
 
@@ -23,10 +23,17 @@ provider "aws" {
       ManagedBy   = "Terraform"
       Project     = data.terraform_remote_state.global.outputs.project_name
       Service     = "sns-notifications"
-      Environment = var.environment
+      Environment = data.terraform_remote_state.global.outputs.environment
     }
   }
 }
+
+#--------------------------------------------------------------
+# Data Sources
+#--------------------------------------------------------------
+
+# Get current AWS account ID
+data "aws_caller_identity" "current" {}
 
 data "terraform_remote_state" "global" {
   backend = "s3"
@@ -36,3 +43,4 @@ data "terraform_remote_state" "global" {
     key    = "global/terraform.tfstate"
   }
 }
+

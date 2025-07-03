@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 
 resource "aws_cognito_user_pool" "main" {
-  name = "${var.user_pool_name}-${var.environment}"
+  name = "${var.user_pool_name}-${data.terraform_remote_state.global.outputs.environment}"
 
   # Password policy
   password_policy {
@@ -80,7 +80,7 @@ resource "aws_cognito_user_pool" "main" {
   }
 
   tags = {
-    Name = "${var.user_pool_name}-${var.environment}"
+    Name = "${var.user_pool_name}-${data.terraform_remote_state.global.outputs.environment}"
   }
 }
 
@@ -89,7 +89,7 @@ resource "aws_cognito_user_pool" "main" {
 #--------------------------------------------------------------
 
 resource "aws_cognito_user_pool_client" "main" {
-  name         = "${var.app_client_name}-${var.environment}"
+  name         = "${var.app_client_name}-${data.terraform_remote_state.global.outputs.environment}"
   user_pool_id = aws_cognito_user_pool.main.id
 
   # Token validity

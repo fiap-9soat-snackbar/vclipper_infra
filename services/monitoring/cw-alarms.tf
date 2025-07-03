@@ -23,7 +23,7 @@ locals {
 
 # SQS Queue Depth Alarm
 resource "aws_cloudwatch_metric_alarm" "sqs_queue_depth" {
-  alarm_name          = "${data.terraform_remote_state.sqs_processing.outputs.queue_name}-depth"
+  alarm_name          = "${data.terraform_remote_state.sqs.outputs.queue_name}-depth"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = var.sqs_queue_depth_evaluation_periods
   metric_name         = "ApproximateNumberOfVisibleMessages"
@@ -38,19 +38,19 @@ resource "aws_cloudwatch_metric_alarm" "sqs_queue_depth" {
   ok_actions    = [local.success_topic_arn]
   
   dimensions = {
-    QueueName = data.terraform_remote_state.sqs_processing.outputs.queue_name
+    QueueName = data.terraform_remote_state.sqs.outputs.queue_name
   }
 
   tags = merge(local.common_tags, {
     AlarmType = "SQS"
     Severity  = "High"
-    Resource  = data.terraform_remote_state.sqs_processing.outputs.queue_name
+    Resource  = data.terraform_remote_state.sqs.outputs.queue_name
   })
 }
 
 # SQS Dead Letter Queue Messages Alarm
 resource "aws_cloudwatch_metric_alarm" "sqs_dlq_messages" {
-  alarm_name          = "${data.terraform_remote_state.sqs_processing.outputs.dlq_name}-messages"
+  alarm_name          = "${data.terraform_remote_state.sqs.outputs.dlq_name}-messages"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = var.sqs_dlq_evaluation_periods
   metric_name         = "ApproximateNumberOfVisibleMessages"
@@ -64,19 +64,19 @@ resource "aws_cloudwatch_metric_alarm" "sqs_dlq_messages" {
   alarm_actions = [local.failure_topic_arn]
   
   dimensions = {
-    QueueName = data.terraform_remote_state.sqs_processing.outputs.dlq_name
+    QueueName = data.terraform_remote_state.sqs.outputs.dlq_name
   }
 
   tags = merge(local.common_tags, {
     AlarmType = "SQS"
     Severity  = "Critical"
-    Resource  = data.terraform_remote_state.sqs_processing.outputs.dlq_name
+    Resource  = data.terraform_remote_state.sqs.outputs.dlq_name
   })
 }
 
 # SQS Message Age Alarm (messages stuck in queue)
 resource "aws_cloudwatch_metric_alarm" "sqs_message_age" {
-  alarm_name          = "${data.terraform_remote_state.sqs_processing.outputs.queue_name}-message-age"
+  alarm_name          = "${data.terraform_remote_state.sqs.outputs.queue_name}-message-age"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
   metric_name         = "ApproximateAgeOfOldestMessage"
@@ -90,13 +90,13 @@ resource "aws_cloudwatch_metric_alarm" "sqs_message_age" {
   ok_actions    = [local.success_topic_arn]
   
   dimensions = {
-    QueueName = data.terraform_remote_state.sqs_processing.outputs.queue_name
+    QueueName = data.terraform_remote_state.sqs.outputs.queue_name
   }
 
   tags = merge(local.common_tags, {
     AlarmType = "SQS"
     Severity  = "Medium"
-    Resource  = data.terraform_remote_state.sqs_processing.outputs.queue_name
+    Resource  = data.terraform_remote_state.sqs.outputs.queue_name
   })
 }
 

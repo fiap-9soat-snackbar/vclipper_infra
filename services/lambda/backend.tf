@@ -14,4 +14,9 @@ data "terraform_remote_state" "global" {
   }
 }
 
+#--------------------------------------------------------------
+# Data Sources
+#--------------------------------------------------------------
+
+# Get current AWS account ID
 data "aws_caller_identity" "current" {}

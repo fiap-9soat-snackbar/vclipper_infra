@@ -28,6 +28,12 @@ terraform {
 }
 
 
+#--------------------------------------------------------------
+# Data Sources
+#--------------------------------------------------------------
+
+# Get current AWS account ID
+data "aws_caller_identity" "current" {}
 
 data "terraform_remote_state" "global" {
   backend = "s3"
@@ -37,13 +43,6 @@ data "terraform_remote_state" "global" {
     key    = "global/terraform.tfstate"
   }
 }
-
-#--------------------------------------------------------------
-# Data Sources
-#--------------------------------------------------------------
-
-# Get current AWS account ID
-data "aws_caller_identity" "current" {}
 
 # Data source to get video storage bucket information
 data "terraform_remote_state" "video_storage" {

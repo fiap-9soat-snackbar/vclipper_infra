@@ -1,17 +1,12 @@
-#--------------------------------------------------------------
-# Data Sources
-#--------------------------------------------------------------
 
-# Get current AWS account ID
-data "aws_caller_identity" "current" {}
 
 #--------------------------------------------------------------
 # Local Values
 #--------------------------------------------------------------
 
 locals {
-  success_topic_name = var.success_topic_name_override != "" ? var.success_topic_name_override : "${data.terraform_remote_state.global.outputs.project_name}-video-processing-success-${var.environment}"
-  failure_topic_name = var.failure_topic_name_override != "" ? var.failure_topic_name_override : "${data.terraform_remote_state.global.outputs.project_name}-video-processing-failure-${var.environment}"
+  success_topic_name = var.success_topic_name_override != "" ? var.success_topic_name_override : "${data.terraform_remote_state.global.outputs.project_name}-video-processing-success-${data.terraform_remote_state.global.outputs.environment}"
+  failure_topic_name = var.failure_topic_name_override != "" ? var.failure_topic_name_override : "${data.terraform_remote_state.global.outputs.project_name}-video-processing-failure-${data.terraform_remote_state.global.outputs.environment}"
   
   common_tags = merge(var.tags, {
     Service = "sns-notifications"

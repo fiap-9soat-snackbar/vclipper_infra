@@ -1,13 +1,7 @@
-variable "terraform_state_bucket" {
+variable "bucket" {
   description = "Name of the S3 bucket storing Terraform state"
   type        = string
   default     = "vclipper-terraform-state-dev-rmxhnjty"
-}
-
-variable "environment" {
-  description = "Environment name (dev, staging, prod)"
-  type        = string
-  default     = "dev"
 }
 
 variable "user_pool_name" {

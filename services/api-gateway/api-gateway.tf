@@ -2,33 +2,13 @@
 # VClipper API Gateway - Video Processing REST API
 #--------------------------------------------------------------
 
-# Data sources for remote state
-data "terraform_remote_state" "cognito" {
-  backend = "s3"
-  config = {
-    region = var.aws_region
-    bucket = var.terraform_state_bucket
-    key    = "global/cognito/terraform.tfstate"
-  }
-}
-
-data "terraform_remote_state" "frontend_hosting" {
-  backend = "s3"
-  config = {
-    region = var.aws_region
-    bucket = var.terraform_state_bucket
-    key    = "global/frontend-hosting/terraform.tfstate"
-  }
-}
-
-data "aws_caller_identity" "current" {}
 
 #--------------------------------------------------------------
 # API Gateway HTTP API
 #--------------------------------------------------------------
 
 resource "aws_apigatewayv2_api" "vclipper_api" {
-  name          = "${var.project_name}-${var.environment}-api"
+  name          = "${data.terraform_remote_state.global.outputs.project_name}-${data.terraform_remote_state.global.outputs.environment}-api"
   description   = "VClipper Video Processing HTTP API Gateway"
   protocol_type = "HTTP"
   
@@ -45,9 +25,9 @@ resource "aws_apigatewayv2_api" "vclipper_api" {
   }
   
   tags = {
-    Name        = "${var.project_name}-${var.environment}-api"
-    Project     = var.project_name
-    Environment = var.environment
+    Name        = "${data.terraform_remote_state.global.outputs.project_name}-${data.terraform_remote_state.global.outputs.environment}-api"
+    Project     = data.terraform_remote_state.global.outputs.project_name
+    Environment = data.terraform_remote_state.global.outputs.environment
     ManagedBy   = "terraform"
     Service     = "api-gateway"
   }
@@ -69,8 +49,6 @@ resource "aws_apigatewayv2_authorizer" "cognito_jwt" {
   }
 }
 
-
-
 #--------------------------------------------------------------
 # API Gateway Stage
 #--------------------------------------------------------------
@@ -82,7 +60,7 @@ resource "aws_apigatewayv2_stage" "default" {
   
   # Access logging to monitoring service log group
   access_log_settings {
-    destination_arn = "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/apigateway/vclipper"
+    destination_arn = "arn:aws:logs:${data.terraform_remote_state.global.outputs.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/apigateway/vclipper"
     format = jsonencode({
       requestId        = "$context.requestId"
       ip              = "$context.identity.sourceIp"
@@ -104,9 +82,9 @@ resource "aws_apigatewayv2_stage" "default" {
   }
   
   tags = {
-    Name        = "${var.project_name}-${var.environment}-api-stage"
-    Project     = var.project_name
-    Environment = var.environment
+    Name        = "${data.terraform_remote_state.global.outputs.project_name}-${data.terraform_remote_state.global.outputs.environment}-api-stage"
+    Project     = data.terraform_remote_state.global.outputs.project_name
+    Environment = data.terraform_remote_state.global.outputs.environment
     ManagedBy   = "terraform"
     Service     = "api-gateway"
   }
@@ -234,15 +212,15 @@ resource "aws_apigatewayv2_route" "video_download" {
 #--------------------------------------------------------------
 
 resource "aws_apigatewayv2_api" "vclipper_websocket" {
-  name          = "${var.project_name}-${var.environment}-websocket"
+  name          = "${data.terraform_remote_state.global.outputs.project_name}-${data.terraform_remote_state.global.outputs.environment}-websocket"
   description   = "VClipper WebSocket API for real-time video processing updates"
   protocol_type = "WEBSOCKET"
   route_selection_expression = "$request.body.action"
   
   tags = {
-    Name        = "${var.project_name}-${var.environment}-websocket"
-    Project     = var.project_name
-    Environment = var.environment
+    Name        = "${data.terraform_remote_state.global.outputs.project_name}-${data.terraform_remote_state.global.outputs.environment}-websocket"
+    Project     = data.terraform_remote_state.global.outputs.project_name
+    Environment = data.terraform_remote_state.global.outputs.environment
     ManagedBy   = "terraform"
     Service     = "api-gateway"
     Component   = "websocket"
@@ -262,9 +240,9 @@ resource "aws_apigatewayv2_stage" "websocket_default" {
   }
   
   tags = {
-    Name        = "${var.project_name}-${var.environment}-websocket-stage"
-    Project     = var.project_name
-    Environment = var.environment
+    Name        = "${data.terraform_remote_state.global.outputs.project_name}-${data.terraform_remote_state.global.outputs.environment}-websocket-stage"
+    Project     = data.terraform_remote_state.global.outputs.project_name
+    Environment = data.terraform_remote_state.global.outputs.environment
     ManagedBy   = "terraform"
     Service     = "api-gateway"
     Component   = "websocket"

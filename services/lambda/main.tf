@@ -5,7 +5,7 @@ resource "aws_lambda_layer_version" "jwt_layer" {
 }
 
 resource "aws_lambda_function" "authorizer" {
-  function_name    = "${data.terraform_remote_state.global.outputs.project_name}-lambda-authorizer"
+  function_name    = "${data.terraform_remote_state.global.outputs.project_name}-authorizer-${data.terraform_remote_state.global.outputs.environment}"
   role             = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LabRole"
   handler          = "authorizer.lambda_handler"
   runtime          = "python3.9"
