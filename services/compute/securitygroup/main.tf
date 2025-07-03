@@ -1,7 +1,7 @@
 module "sg_additional_vclipper_eks" {
   source = "terraform-aws-modules/security-group/aws"
 
-  name        = join("-", [data.terraform_remote_state.global.outputs.project_name, "Additional-vclipper-EKS"])
+  name        = join("-", [data.terraform_remote_state.global.outputs.project_name, "cluster-eks-prod-Additional"])
   description = join(":", [data.terraform_remote_state.global.outputs.project_name, "default additional vclipper security group"])
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
@@ -37,9 +37,8 @@ module "sg_additional_vclipper_eks" {
   ]
 
   tags = {
-    Name         = join("-", [data.terraform_remote_state.global.outputs.project_name, "Additional-vclipper-EKS"])
+    Name         = join("-", [data.terraform_remote_state.global.outputs.project_name, "cluster-eks-prod-Additional"])
     Provisioned  = "Terraform"
-    CreatedBy    = "Team-82"
     Product      = "Hackaton"
   }
 }
@@ -48,7 +47,7 @@ module "sg_additional_vclipper_eks" {
 module "sg_node_vclipper_eks" {
   source = "terraform-aws-modules/security-group/aws"
 
-  name        = join("-", [data.terraform_remote_state.global.outputs.project_name, "Node-vclipper-EKS"])
+  name        = join("-", [data.terraform_remote_state.global.outputs.project_name, "cluster-eks-prod"])
   description = join(":", [data.terraform_remote_state.global.outputs.project_name, "default Node vclipper security group"])
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
@@ -81,10 +80,9 @@ module "sg_node_vclipper_eks" {
   ]
 
   tags = {
-    "kubernetes.io/cluster/snackbar-vclipper" = "owned"
-    Name                                         = join("-", [data.terraform_remote_state.global.outputs.project_name, "Node-Cluster-1-prod-EKS"])
+    "kubernetes.io/cluster/vclipper-cluster" = "owned"
+    Name                                         = join("-", [data.terraform_remote_state.global.outputs.project_name, "cluster-eks-prod"])
     Provisioned  = "Terraform"
-    CreatedBy    = "Team-82"
     Product      = "Hackaton"
   }
 }

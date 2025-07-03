@@ -2,8 +2,8 @@ module "eks_vclipper" {
   source                          = "terraform-aws-modules/eks/aws"
   version                         = "18.27.1"
   vpc_id                          = data.terraform_remote_state.vpc.outputs.vpc_id
-  cluster_name                    = join("-", [data.terraform_remote_state.global.outputs.project_name, "vclipper"])
-  cluster_version                 = "1.31"
+  cluster_name                    = join("-", [data.terraform_remote_state.global.outputs.project_name, "cluster"])
+  cluster_version                 = "1.32"
   subnet_ids                      = data.terraform_remote_state.vpc.outputs.private_subnets
   cluster_security_group_id       = data.terraform_remote_state.security_group_vclipper.outputs.sg_additional_vclipper_eks_id
   node_security_group_id          = data.terraform_remote_state.security_group_vclipper.outputs.sg_node_vclipper_eks_id
@@ -42,7 +42,7 @@ module "eks_vclipper" {
   }
 
   eks_managed_node_groups = {
-    snackbar = {
+    application = {
       name                    = "ng-vclipper-app"
       min_size                = 1
       max_size                = 3

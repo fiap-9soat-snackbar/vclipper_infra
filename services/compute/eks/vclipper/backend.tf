@@ -1,5 +1,6 @@
 provider "aws" {
   region = data.terraform_remote_state.global.outputs.aws_region
+  version = "<= 5.75.0"
 }
 
 provider "kubernetes" {
