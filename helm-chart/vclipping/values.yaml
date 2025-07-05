@@ -27,13 +27,13 @@ DEPLOYMENT:
     ENABLED: true
 
   TOLERATIONS:
-    ENABLED: true
+    ENABLED: false
     KEY: application
     OPERATOR: Equal
     VALUE: vclipper-app
     EFFECT: NoSchedule
   NODESELECTOR:
-    ENABLED: true
+    ENABLED: false
     KEY: application
     VALUE: vclipper-app
   RESOURCES:
