@@ -5,7 +5,8 @@ This Terraform configuration provisions AWS SQS queues for decoupled video proce
 ## 🚀 Features
 
 - **Main Processing Queue**: Handles video processing jobs triggered by S3 uploads
-- **Dead Letter Queue (DLQ)**: Captures failed processing jobs for analysis and retry
+- **VClipping Results Queue**: Handles processing results from vclipping microservice
+- **Dead Letter Queues (DLQ)**: Captures failed processing jobs for analysis and retry
 - **S3 Integration**: Automatically receives messages when videos are uploaded to S3
 - **LabRole Access**: Backend services use existing LabRole for queue operations
 - **CloudWatch Monitoring**: Alarms for queue depth and DLQ messages
@@ -14,11 +15,11 @@ This Terraform configuration provisions AWS SQS queues for decoupled video proce
 ## 📐 Current Architecture
 
 ```
-S3 Video Upload → SQS Processing Queue → Backend Processing → Success/Failure
-                       ↓                        ↓
-                  CloudWatch Alarms      Dead Letter Queue
-                       ↓                        ↓
-                  SNS Notifications      Manual Investigation
+vclipper_processing → [video-processing-dev] → vclipping → [vclipping-results-dev] → vclipper_processing
+                           ↓                                      ↓
+                    CloudWatch Alarms                    CloudWatch Alarms
+                           ↓                                      ↓
+                    SNS Notifications                   SNS Notifications
 ```
 
 ## 🛠️ Project Structure
@@ -42,7 +43,7 @@ S3 Video Upload → SQS Processing Queue → Backend Processing → Success/Fail
 
 | Resource Type | Purpose |
 |---------------|---------|
-| `aws_sqs_queue` | Main processing queue and dead letter queue |
+| `aws_sqs_queue` | Main processing queues and dead letter queues |
 | `aws_sqs_queue_policy` | Access policies for S3 and LabRole |
 | `aws_sqs_queue_redrive_policy` | Failed message handling configuration |
 | `aws_sqs_queue_redrive_allow_policy` | DLQ source queue permissions |
@@ -90,7 +91,7 @@ terraform destroy
 
 After deployment, your SQS queues will be configured as:
 
-### Main Processing Queue
+### Main Processing Queue (vclipper_processing → vclipping)
 - **Name**: `vclipper-video-processing-dev`
 - **Type**: Standard (not FIFO)
 - **Visibility Timeout**: 5 minutes
@@ -98,9 +99,17 @@ After deployment, your SQS queues will be configured as:
 - **Long Polling**: 20 seconds
 - **Max Receive Count**: 3 (before moving to DLQ)
 
-### Dead Letter Queue
-- **Name**: `vclipper-video-processing-dlq-dev`
+### VClipping Results Queue (vclipping → vclipper_processing)
+- **Name**: `vclipper-vclipping-results-dev`
 - **Type**: Standard (not FIFO)
+- **Visibility Timeout**: 5 minutes
+- **Message Retention**: 14 days
+- **Long Polling**: 20 seconds
+- **Max Receive Count**: 3 (before moving to DLQ)
+
+### Dead Letter Queues
+- **Processing DLQ**: `vclipper-video-processing-dlq-dev`
+- **Results DLQ**: `vclipper-vclipping-results-dlq-dev`
 - **Message Retention**: 14 days
 - **Purpose**: Failed processing jobs analysis
 
@@ -113,15 +122,20 @@ After deployment, your SQS queues will be configured as:
 - **LabRole**: Can receive, delete, and manage messages
 - **Source Validation**: Only from the video storage S3 bucket
 
-#### Dead Letter Queue Policy
-- **SQS Service**: Can receive messages from main queue
+#### Results Queue Policy
+- **VClipping Service**: Can send processing results
+- **VClipper Processing**: Can receive processing results
 - **LabRole**: Can receive, delete, and manage messages
-- **Source Validation**: Only from the main processing queue
+
+#### Dead Letter Queue Policy
+- **SQS Service**: Can receive messages from main queues
+- **LabRole**: Can receive, delete, and manage messages
+- **Source Validation**: Only from the respective main queues
 
 ## 🔗 Integration with Other Services
 
 ### S3 Video Storage Integration
-The queue receives messages automatically when videos are uploaded:
+The main processing queue receives messages automatically when videos are uploaded:
 
 ```json
 {
@@ -143,8 +157,28 @@ The queue receives messages automatically when videos are uploaded:
 }
 ```
 
+### VClipping Microservice Integration
+The vclipping service sends processing results:
+
+```json
+{
+  "taskId": "task-123",
+  "status": "COMPLETED",
+  "result": {
+    "framesExtracted": 120,
+    "outputLocation": "s3://bucket/vclipping-frames/task-123-frames.zip",
+    "processingTime": 45.2,
+    "metadata": {
+      "videoDuration": 120.0,
+      "frameCount": 120,
+      "resolution": "1920x1080"
+    }
+  }
+}
+```
+
 ### Backend Processing Integration (Java/EKS)
-Backend services poll the queue for processing jobs:
+Backend services poll the queues for processing jobs:
 
 ```java
 // Example: Receive messages from SQS
@@ -152,12 +186,15 @@ Backend services poll the queue for processing jobs:
 public class VideoProcessingService {
     
     @Value("${sqs.video.processing.queue.url}")
-    private String queueUrl;
+    private String processingQueueUrl;
+    
+    @Value("${sqs.vclipping.results.queue.url}")
+    private String resultsQueueUrl;
     
     @Scheduled(fixedDelay = 5000)
     public void processVideoMessages() {
         ReceiveMessageRequest request = ReceiveMessageRequest.builder()
-            .queueUrl(queueUrl)
+            .queueUrl(processingQueueUrl)
             .maxNumberOfMessages(10)
             .waitTimeSeconds(20)  // Long polling
             .build();
@@ -174,6 +211,26 @@ public class VideoProcessingService {
             }
         }
     }
+    
+    @Scheduled(fixedDelay = 5000)
+    public void processResultMessages() {
+        ReceiveMessageRequest request = ReceiveMessageRequest.builder()
+            .queueUrl(resultsQueueUrl)
+            .maxNumberOfMessages(10)
+            .waitTimeSeconds(20)  // Long polling
+            .build();
+            
+        List<Message> messages = sqsClient.receiveMessage(request).messages();
+        
+        for (Message message : messages) {
+            try {
+                processResult(message);
+                deleteMessage(message);
+            } catch (Exception e) {
+                log.error("Failed to process result: {}", e.getMessage());
+            }
+        }
+    }
 }
 ```
 
@@ -184,6 +241,8 @@ Add to your backend application configuration:
 # SQS Configuration
 SQS_VIDEO_PROCESSING_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/668309122622/vclipper-video-processing-dev
 SQS_VIDEO_PROCESSING_DLQ_URL=https://sqs.us-east-1.amazonaws.com/668309122622/vclipper-video-processing-dlq-dev
+SQS_VCLIPPING_RESULTS_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/668309122622/vclipper-vclipping-results-dev
+SQS_VCLIPPING_RESULTS_DLQ_URL=https://sqs.us-east-1.amazonaws.com/668309122622/vclipper-vclipping-results-dlq-dev
 SQS_REGION=us-east-1
 
 # Processing configuration
@@ -196,8 +255,8 @@ SQS_LONG_POLLING_SECONDS=20
 
 ### Normal Processing Flow
 ```
-1. Video uploaded to S3 → 2. S3 sends message to SQS → 3. Backend polls SQS
-4. Backend processes video → 5. Backend deletes message → 6. Success!
+1. Video uploaded to S3 → 2. S3 sends message to processing queue → 3. VClipping polls queue
+4. VClipping processes video → 5. VClipping sends result to results queue → 6. VClipper Processing receives result
 ```
 
 ### Failure and Retry Flow
@@ -208,12 +267,12 @@ SQS_LONG_POLLING_SECONDS=20
 
 ## 📊 CloudWatch Monitoring
 
-### Queue Depth Alarm
+### Queue Depth Alarms
 - **Metric**: `ApproximateNumberOfVisibleMessages`
 - **Threshold**: > 10 messages
 - **Purpose**: Detect processing bottlenecks
 
-### Dead Letter Queue Alarm
+### Dead Letter Queue Alarms
 - **Metric**: `ApproximateNumberOfVisibleMessages`
 - **Threshold**: > 0 messages
 - **Purpose**: Detect processing failures
@@ -238,12 +297,23 @@ resource "aws_s3_bucket_notification" "video_storage" {
 ## 📊 Outputs
 
 Key outputs for integration with other services:
+
+### Main Processing Queue
 - `queue_name`: SQS queue name for backend configuration
 - `queue_arn`: For S3 notification configuration
 - `queue_url`: For backend polling operations
 - `dlq_name`: Dead letter queue name for monitoring
+
+### VClipping Results Queue
+- `vclipping_results_queue_name`: Results queue name
+- `vclipping_results_queue_arn`: Results queue ARN
+- `vclipping_results_queue_url`: Results queue URL for polling
+- `vclipping_results_dlq_name`: Results DLQ name for monitoring
+
+### Configuration
 - `visibility_timeout_seconds`: Processing timeout configuration
 - `max_receive_count`: Retry limit configuration
+- `message_retention_seconds`: Message retention period
 
 ## 🔧 Troubleshooting
 
@@ -278,8 +348,14 @@ aws sqs get-queue-attributes --queue-url <queue-url> --attribute-names Policy
 
 ### Useful Commands
 ```bash
-# Send test message to queue
-aws sqs send-message --queue-url <queue-url> --message-body '{"test": "message"}'
+# List all VClipper queues
+aws sqs list-queues --queue-name-prefix vclipper
+
+# Send test message to processing queue
+aws sqs send-message --queue-url <processing-queue-url> --message-body '{"test": "message"}'
+
+# Send test message to results queue
+aws sqs send-message --queue-url <results-queue-url> --message-body '{"test": "result"}'
 
 # Receive messages from queue
 aws sqs receive-message --queue-url <queue-url> --max-number-of-messages 10
@@ -289,11 +365,22 @@ aws cloudwatch get-metric-statistics \
   --namespace AWS/SQS \
   --metric-name ApproximateNumberOfVisibleMessages \
   --dimensions Name=QueueName,Value=vclipper-video-processing-dev \
-  --start-time 2025-06-22T00:00:00Z \
-  --end-time 2025-06-22T23:59:59Z \
+  --start-time 2025-07-05T00:00:00Z \
+  --end-time 2025-07-05T23:59:59Z \
   --period 300 \
   --statistics Average
 
 # Purge queue (remove all messages)
 aws sqs purge-queue --queue-url <queue-url>
 ```
+
+## 🎯 Queue Summary
+
+After deployment, you will have **4 queues total**:
+
+1. **`vclipper-video-processing-dev`** - Main processing requests
+2. **`vclipper-video-processing-dlq-dev`** - Failed processing requests
+3. **`vclipper-vclipping-results-dev`** - Processing results
+4. **`vclipper-vclipping-results-dlq-dev`** - Failed result messages
+
+This architecture supports the complete bidirectional communication between `vclipper_processing` and `vclipping` microservices.

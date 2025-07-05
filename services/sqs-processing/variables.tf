@@ -68,3 +68,22 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+# VClipping microservice queue configuration
+variable "enable_vclipping_queues" {
+  description = "Enable creation of vclipping microservice queues"
+  type        = bool
+  default     = true
+}
+
+variable "vclipping_processing_queue_name_override" {
+  description = "Override the default vclipping processing queue name (optional)"
+  type        = string
+  default     = ""
+}
+
+variable "vclipping_results_queue_name_override" {
+  description = "Override the default vclipping results queue name (optional)"
+  type        = string
+  default     = ""
+}
