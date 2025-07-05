@@ -30,12 +30,12 @@ DEPLOYMENT:
     ENABLED: true
     KEY: application
     OPERATOR: Equal
-    VALUE: vclipper
+    VALUE: vclipper-app
     EFFECT: NoSchedule
   NODESELECTOR:
     ENABLED: true
     KEY: application
-    VALUE: vclipper
+    VALUE: vclipper-app
   RESOURCES:
     MIN:
       CPU: 50m
