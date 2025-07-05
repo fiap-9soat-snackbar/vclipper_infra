@@ -68,33 +68,33 @@ SERVICE:
     
 
 SECRET:
-  DATABASE:
-    MONGODB_USER: vclipperuser
-    MONGODB_PASSWORD: vclipper01
-    DB_HOST: vclipper-hackaton-dev.0acxv.mongodb.net
-    APP_DB: vclipper
-    DB_PORT: "27017"
-    MONGODB_OPTIONS: ""
-    RDS_HOST: ""
-    RDS_PASSWORD: ""
-    RDS_DATABASE: "vclipper"
+SERVER_PORT: "8080"
+DB_HOST: "vclipper-hackaton-prod.0acxv.mongodb.net"
+DB_PORT: "27017"
+MONGODB_DATABASE: "vclipper"
+MONGODB_USER: "vclipperuser"
+MONGODB_PASSWORD: "vclipper01"
+MONGO_INITDB_ROOT_USERNAME: "mongodbadmin"
+MONGO_INITDB_ROOT_PASSWORD: "admin"
+MONGO_INITDB_DATABASE: "vclipper"
 
-  JWT:
-    SECRET: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
-    EXPIRES_IN: "3600000"
-  INTEGRATION:
-    ORDER_SERVICE_URL: "http://vclipper-prod.prod.svc.cluster.local"
-    AWS_ACCOUNT_ID: ""
-    AWS_REGION: "us-east-1"
-    AWS_SQS_PRODUCT_EVENTS_QUEUE_URL: "https://sqs.us-east-1.amazonaws.com/${AWS_ACCOUNT_ID}/vclipper-queue"
-    AWS_ENDPOINT_URL: "https://sqs.us-east-1.amazonaws.com"
-    AWS_ACCESS_KEY: ""
-    AWS_SECRET_KEY: ""
-    AWS_SQS_POLLING_ENABLED: "true"
-    AWS_SQS_POLLING_DELAY_MS: "1000"
-    AWS_SQS_MAX_MESSAGES: "10"
-    AWS_SQS_WAIT_TIME_SECONDS: "5"
-    LOG_LEVEL_ROOT: "INFO"
-    LOG_LEVEL_APP: "DEBUG"
-    LOG_LEVEL_WEB: "INFO"
-    LOG_LEVEL_MONGODB: "INFO"
+MAX_FILE_SIZE: "500MB"
+MAX_REQUEST_SIZE: "500MB"
+VCLIPPER_MAX_FILE_SIZE_BYTES: "524288000"
+VCLIPPER_ALLOWED_FORMATS: "mp4,avi,mov,wmv,flv,webm"
+VCLIPPER_DOWNLOAD_EXPIRATION_MINUTES: "60"
+VCLIPPER_RETRY_MAX_ATTEMPTS: "3"
+VCLIPPER_RETRY_INITIAL_DELAY: "30"
+VCLIPPER_RETRY_MAX_DELAY: "300"
+LOG_LEVEL_ROOT: "INFO"
+LOG_LEVEL_VCLIPPER: "DEBUG"
+LOG_LEVEL_SPRING_WEB: "INFO"
+LOG_LEVEL_MONGODB: "DEBUG"
+
+AWS_REGION: "us-east-1"
+AWS_S3_BUCKET: "vclipper-video-storage-dev"
+AWS_SQS_PROCESSING_QUEUE_URL: "https://sqs.us-east-1.amazonaws.com/668309122622/vclipper-video-processing-dev"
+AWS_ACCOUNT_ID: ""
+AWS_SESSION_TOKEN: ""
+AWS_ACCESS_KEY_ID: ""
+AWS_SECRET_ACCESS_KEY: ""

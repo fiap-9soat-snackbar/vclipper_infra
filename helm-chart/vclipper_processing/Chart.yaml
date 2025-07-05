@@ -9,6 +9,6 @@ maintainers:
 - email: team82@snackbar.com.br
   name: Fiap 09SOAT Hackaton - VClipper App
   url: https://github.com/fiap-9soat-snackbar/vclipper_infra
-name: vclipper-app
+name: vclipper_processing
 version: 1.0.0
 type: application

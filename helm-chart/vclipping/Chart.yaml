@@ -1,0 +1,14 @@
+apiVersion: v2
+description: FIAP Tech Hackaton Project
+keywords:
+- vclipper
+- FIAP
+- 09SOAT
+- JAVA Spring Boot
+maintainers:
+- email: team82@snackbar.com.br
+  name: Fiap 09SOAT Hackaton - VClipper App
+  url: https://github.com/fiap-9soat-snackbar/vclipper_infra
+name: vclipping
+version: 1.0.0
+type: application

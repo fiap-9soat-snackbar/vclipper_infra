@@ -1,0 +1,34 @@
+{{ if .Values.SERVICE.LOAD_BALANCER.ENABLED }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-lb
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    dns.alpha.kubernetes.io/internal: {{ .Release.Namespace }}-{{ .Values.SERVICE.LOAD_BALANCER.DNS_SUFFIX }}
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: service={{ .Release.Name }},namespace={{ .Release.Namespace }}
+    {{ if .Values.SERVICE.HTTPS.ENABLED }}
+      # TODO: Fill in with the ARN of your certificate.
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{.Values.SERVICE.HTTPS.CERT}}
+      # Only run SSL on the port named "https" below.
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: https
+    {{ end }}
+      # Make Load Balancer internal
+    service.beta.kubernetes.io/aws-load-balancer-internal: {{.Values.SERVICE.INTERNAL | quote}}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: {{ .Values.SERVICE.PORT }}
+      targetPort: {{ .Values.DEPLOYMENT.PORT }}
+      protocol: TCP
+    {{ if .Values.SERVICE.HTTPS.ENABLED }}
+    - name: https
+      port: {{ .Values.SERVICE.HTTPS.PORT}}
+      targetPort: {{ .Values.DEPLOYMENT.PORT }}
+    {{ end }}    
+  selector:
+    app: {{ .Release.Name }}
+{{ end }}
