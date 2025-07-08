@@ -9,8 +9,8 @@ locals {
   dlq_name   = var.dlq_name_override != "" ? var.dlq_name_override : "${data.terraform_remote_state.global.outputs.project_name}-video-processing-dlq-${data.terraform_remote_state.global.outputs.environment}"
   
   # VClipping results queue names (vclipping → vclipper_processing)
-  vclipping_results_queue_name = "${data.terraform_remote_state.global.outputs.project_name}-vclipping-results-${var.environment}"
-  vclipping_results_dlq_name = "${data.terraform_remote_state.global.outputs.project_name}-vclipping-results-dlq-${var.environment}"
+  vclipping_results_queue_name = "${data.terraform_remote_state.global.outputs.project_name}-vclipping-results-${data.terraform_remote_state.global.outputs.environment}"
+  vclipping_results_dlq_name = "${data.terraform_remote_state.global.outputs.project_name}-vclipping-results-dlq-${data.terraform_remote_state.global.outputs.environment}"
   
   common_tags = merge(var.tags, {
     Service = "sqs-processing"
