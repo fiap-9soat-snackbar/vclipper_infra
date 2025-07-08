@@ -44,3 +44,38 @@ output "message_retention_seconds" {
   description = "Number of seconds Amazon SQS retains a message"
   value       = var.message_retention_seconds
 }
+
+#--------------------------------------------------------------
+# VClipping Results Queue Outputs (vclipping → vclipper_processing)
+#--------------------------------------------------------------
+
+# VClipping Results Queue outputs
+output "vclipping_results_queue_name" {
+  description = "Name of the vclipping results SQS queue"
+  value       = aws_sqs_queue.vclipping_results.name
+}
+
+output "vclipping_results_queue_arn" {
+  description = "ARN of the vclipping results SQS queue"
+  value       = aws_sqs_queue.vclipping_results.arn
+}
+
+output "vclipping_results_queue_url" {
+  description = "URL of the vclipping results SQS queue"
+  value       = aws_sqs_queue.vclipping_results.url
+}
+
+output "vclipping_results_dlq_name" {
+  description = "Name of the vclipping results dead letter queue"
+  value       = aws_sqs_queue.vclipping_results_dlq.name
+}
+
+output "vclipping_results_dlq_arn" {
+  description = "ARN of the vclipping results dead letter queue"
+  value       = aws_sqs_queue.vclipping_results_dlq.arn
+}
+
+output "vclipping_results_dlq_url" {
+  description = "URL of the vclipping results dead letter queue"
+  value       = aws_sqs_queue.vclipping_results_dlq.url
+}
