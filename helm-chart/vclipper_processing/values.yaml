@@ -68,37 +68,37 @@ SERVICE:
     
 
 SECRET:
-  SERVER_PORT: "8080"
-  DB_HOST: "vclipper-hackaton-prod.0acxv.mongodb.net"
-  DB_PORT: "27017"
-  MONGODB_DATABASE: "vclipper"
-  MONGODB_USER: "vclipperuser"
-  MONGODB_PASSWORD: "vclipper01"
-  MONGO_INITDB_ROOT_USERNAME: "mongodbadmin"
-  MONGO_INITDB_ROOT_PASSWORD: "admin"
-  MONGO_INITDB_DATABASE: "vclipper"
+  SERVER_PORT: 8080
+  DB_HOST: vclipper-hackaton-prod.0acxv.mongodb.net
+  DB_PORT: 27017
+  MONGODB_DATABASE: vclipper
+  MONGODB_USER: vclipperuser
+  MONGODB_PASSWORD: vclipper01
+  MONGO_INITDB_ROOT_USERNAME: mongodbadmin
+  MONGO_INITDB_ROOT_PASSWORD: admin
+  MONGO_INITDB_DATABASE: vclippe
 
-  MAX_FILE_SIZE: "500MB"
-  MAX_REQUEST_SIZE: "500MB"
-  VCLIPPER_MAX_FILE_SIZE_BYTES: "524288000"
-  VCLIPPER_ALLOWED_FORMATS: "mp4,avi,mov,wmv,flv,webm"
-  VCLIPPER_DOWNLOAD_EXPIRATION_MINUTES: "60"
-  VCLIPPER_RETRY_MAX_ATTEMPTS: "3"
-  VCLIPPER_RETRY_INITIAL_DELAY: "30"
-  VCLIPPER_RETRY_MAX_DELAY: "300"
-  LOG_LEVEL_ROOT: "INFO"
-  LOG_LEVEL_VCLIPPER: "DEBUG"
-  LOG_LEVEL_SPRING_WEB: "INFO"
-  LOG_LEVEL_MONGODB: "DEBUG"
+  MAX_FILE_SIZE: 500MB
+  MAX_REQUEST_SIZE: 500MB
+  VCLIPPER_MAX_FILE_SIZE_BYTES: 524288000
+  VCLIPPER_ALLOWED_FORMATS: mp4,avi,mov,wmv,flv,webm
+  VCLIPPER_DOWNLOAD_EXPIRATION_MINUTES: 60
+  VCLIPPER_RETRY_MAX_ATTEMPTS: 3
+  VCLIPPER_RETRY_INITIAL_DELAY: 30
+  VCLIPPER_RETRY_MAX_DELAY: 300
+  LOG_LEVEL_ROOT: INFO
+  LOG_LEVEL_VCLIPPER: DEBUG
+  LOG_LEVEL_SPRING_WEB: INFO
+  LOG_LEVEL_MONGODB: DEBUG
 
-  AWS_REGION: "us-east-1"
-  AWS_S3_BUCKET: "vclipper-video-storage-prod"
-  AWS_SQS_PROCESSING_QUEUE_URL: "https://sqs.us-east-1.amazonaws.com/879956639231/vclipper-video-processing-prod"
-  AWS_SQS_RESULT_QUEUE_URL: "https://sqs.us-east-1.amazonaws.com/879956639231/vclipper-vclipping-results-prod"
-  AWS_SNS_NOTIFICATION_TOPIC_ARN: "arn:aws:sns:us-east-1:879956639231:vclipper-video-processing-success-prod"
-  AWS_ACCOUNT_ID: "879956639231"
+  AWS_REGION: us-east-1
+  AWS_S3_BUCKET: vclipper-video-storage-prod
+  AWS_SQS_PROCESSING_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/879956639231/vclipper-video-processing-prod
+  AWS_SQS_RESULT_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/879956639231/vclipper-vclipping-results-prod
+  AWS_SNS_NOTIFICATION_TOPIC_ARN: arn:aws:sns:us-east-1:879956639231:vclipper-video-processing-success-prod
+  AWS_ACCOUNT_ID: 879956639231
   AWS_SESSION_TOKEN: ""
   AWS_ACCESS_KEY_ID: ""
   AWS_SECRET_ACCESS_KEY: ""
 
-  CORS_ALLOWED_ORIGINS: "http://localhost:3000,http://127.0.0.1:3000,http://vclipper-frontend-prod.s3-website-us-east-1.amazonaws.com"
+  CORS_ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000,http://vclipper-frontend-prod.s3-website-us-east-1.amazonaws.com
