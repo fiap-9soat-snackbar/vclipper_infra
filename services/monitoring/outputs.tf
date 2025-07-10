@@ -87,10 +87,6 @@ output "app_user_log_group_name" {
   value       = aws_cloudwatch_log_group.app_user_logs.name
 }
 
-output "api_gateway_log_group_name" {
-  description = "Name of the API Gateway log group"
-  value       = data.terraform_remote_state.api_gateway.outputs.api_gateway_logs_name
-}
 
 output "lambda_authorizer_log_group_name" {
   description = "Name of the Lambda authorizer log group"
@@ -154,7 +150,6 @@ output "monitoring_config" {
   description = "Complete monitoring configuration for application integration"
   value = {
     log_groups = {
-      api_gateway_logs         = data.terraform_remote_state.api_gateway.outputs.api_gateway_logs_name
       eks_cluster_logs         = aws_cloudwatch_log_group.eks_cluster_logs.name
       lambda_authorizer_logs   = aws_cloudwatch_log_group.lambda_authorizer_logs.name
       s3_frontend_access_logs  = aws_cloudwatch_log_group.s3_frontend_access_logs.name
@@ -182,23 +177,4 @@ output "monitoring_config" {
   }
   sensitive = false
 }
-#--------------------------------------------------------------
-# API Gateway Monitoring Outputs
-#--------------------------------------------------------------
 
-output "api_gateway_log_group_arn" {
-  description = "ARN of the API Gateway CloudWatch log group"
-  value       = data.terraform_remote_state.api_gateway.outputs.api_gateway_logs_arn
-}
-
-output "api_gateway_alarms" {
-  description = "API Gateway CloudWatch alarms"
-  value = {
-    "4xx_errors"           = aws_cloudwatch_metric_alarm.api_gateway_4xx_errors.arn
-    "5xx_errors"           = aws_cloudwatch_metric_alarm.api_gateway_5xx_errors.arn
-    "high_latency"         = aws_cloudwatch_metric_alarm.api_gateway_latency.arn
-    "integration_latency"  = aws_cloudwatch_metric_alarm.api_gateway_integration_latency.arn
-    "high_requests"        = aws_cloudwatch_metric_alarm.api_gateway_high_request_count.arn
-    "websocket_connections" = aws_cloudwatch_metric_alarm.websocket_connection_count.arn
-  }
-}

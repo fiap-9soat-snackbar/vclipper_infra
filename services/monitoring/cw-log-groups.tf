@@ -2,21 +2,6 @@
 # CloudWatch Log Groups
 #--------------------------------------------------------------
 
-#--------------------------------------------------------------
-# AWS Service-Specific Log Groups
-#--------------------------------------------------------------
-
-# API Gateway Log - Send to Api Gateway Module
-#resource "aws_cloudwatch_log_group" "api_gateway_logs" {
-#  name              = "/aws/apigateway/vclipper"
-#  retention_in_days = var.log_retention_days
-#
-#  tags = merge(local.common_tags, {
-#    LogType = "APIGateway"
-#    Purpose = "API Gateway access and execution logs"
-#  })
-#}
-
 # EKS Cluster Logs
 resource "aws_cloudwatch_log_group" "eks_cluster_logs" {
   name              = "/aws/eks/vclipper/cluster"

@@ -91,13 +91,3 @@ data "terraform_remote_state" "cognito" {
     key    = "global/cognito/terraform.tfstate"
   }
 }
-
-# API Gateway for monitoring
-data "terraform_remote_state" "api_gateway" {
-  backend = "s3"
-  config = {
-    region = "us-east-1"
-    bucket = var.bucket
-    key    = "global/api-gateway/terraform.tfstate"
-  }
-}

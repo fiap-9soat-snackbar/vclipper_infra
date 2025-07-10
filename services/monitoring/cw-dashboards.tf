@@ -5,7 +5,8 @@
 resource "aws_cloudwatch_dashboard" "vclipper_infrastructure" {
   dashboard_name = "VClipper-Infrastructure-${data.terraform_remote_state.global.outputs.environment}"
 
-  dashboard_body = templatefile("${path.module}/dashboards/infrastructure_dashboard.json", {
+  dashboard_body = templatefile("${path.
+  module}/dashboards/infrastructure_dashboard.json", {
     aws_region               = data.terraform_remote_state.global.outputs.aws_region
     queue_name              = data.terraform_remote_state.sqs.outputs.queue_name
     dlq_name                = data.terraform_remote_state.sqs.outputs.dlq_name
@@ -16,7 +17,5 @@ resource "aws_cloudwatch_dashboard" "vclipper_infrastructure" {
     cognito_user_pool_id    = data.terraform_remote_state.cognito.outputs.user_pool_id
     cognito_client_id       = data.terraform_remote_state.cognito.outputs.user_pool_client_id
     application_log_group   = aws_cloudwatch_log_group.app_processing_logs.name
-    api_gateway_id          = data.terraform_remote_state.api_gateway.outputs.api_gateway_id
-    websocket_api_id        = data.terraform_remote_state.api_gateway.outputs.websocket_api_id
   })
 }
