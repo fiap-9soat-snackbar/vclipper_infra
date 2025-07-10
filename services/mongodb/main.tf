@@ -36,8 +36,8 @@ module "mongodb-atlas" {
         password = var.MONGODB_PASSWORD
         roles = [
           for db in local.databases : {
-            role     = "readWrite"
-            database = db
+            role     = "atlasAdmin"
+            database = "admin"
           }
       ]
         scopes = [
