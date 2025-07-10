@@ -72,6 +72,18 @@ resource "aws_cognito_user_pool" "main" {
     }
   }
 
+  schema {
+    attribute_data_type = "String"
+    name               = "preferred_username"
+    required           = false
+    mutable            = true
+
+    string_attribute_constraints {
+      min_length = 0
+      max_length = 2048
+    }
+  }
+
   # Verification message template
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
@@ -86,6 +98,10 @@ resource "aws_cognito_user_pool" "main" {
 
 #--------------------------------------------------------------
 # Cognito User Pool Client
+# 
+# Updated to support preferred_username attribute for user registration
+# and sign-in functionality. This allows users to set a custom username
+# during registration while using email as the primary identifier.
 #--------------------------------------------------------------
 
 resource "aws_cognito_user_pool_client" "main" {
@@ -114,8 +130,8 @@ resource "aws_cognito_user_pool_client" "main" {
   ]
 
   # Read and write attributes
-  read_attributes  = ["email", "name", "email_verified"]
-  write_attributes = ["email", "name"]
+  read_attributes  = ["email", "name", "email_verified", "preferred_username"]
+  write_attributes = ["email", "name", "preferred_username"]
 }
 
 
