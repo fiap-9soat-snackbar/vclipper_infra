@@ -38,7 +38,7 @@ module "eks_vclipper" {
   eks_managed_node_group_defaults = {
     ami_type       = "AL2_x86_64"
     disk_size      = 50
-    instance_types = ["t2.micro", "t3.medium"]
+    instance_types = ["t2.micro", "t3.large"]
   }
 
   eks_managed_node_groups = {
@@ -47,7 +47,7 @@ module "eks_vclipper" {
       min_size                = 1
       max_size                = 3
       desired_size            = 1
-      instance_types          = ["t3.medium"]
+      instance_types          = ["t3.large"]
       create_iam_role         = "false"
       iam_role_arn            = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LabRole"
        
