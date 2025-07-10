@@ -44,9 +44,9 @@ module "eks_vclipper" {
   eks_managed_node_groups = {
     application = {
       name                    = "ng-vclipper-app"
-      min_size                = 1
-      max_size                = 3
-      desired_size            = 1
+      min_size                = 2
+      max_size                = 5
+      desired_size            = 2
       instance_types          = ["t3.large"]
       create_iam_role         = "false"
       iam_role_arn            = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LabRole"
