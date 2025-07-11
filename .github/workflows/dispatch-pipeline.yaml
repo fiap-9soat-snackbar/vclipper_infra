@@ -1,4 +1,4 @@
-name: Dispatch Atlas MongoDB Database Pipeline
+name: Dispatch Vclipper Pipeline
 
 on:
   push:
@@ -9,10 +9,10 @@ jobs:
   dispatch_db_pipeline:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Database Commit Event
+      - name: Trigger Pipeline Commit Event
         run: |
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
             https://api.github.com/repos/fiap-9soat-snackbar/vclipper-pipeline/dispatches \
-            -d '{"event_type":"db_commit","client_payload":{"repo_name":"database"}}'
+            -d '{"event_type":"infra_commit","client_payload":{"repo_name":"vclipper_infra"}}'
